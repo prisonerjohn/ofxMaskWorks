@@ -35,6 +35,9 @@ namespace ofxMaskWorks
 		void setMaskSize(int width, int height);
 		const glm::ivec2 & getMaskSize() const;
 
+		void setControlBounds(const ofRectangle & controlBounds);
+		const ofRectangle & getControlBounds() const;
+
 		void setEditing(bool editing);
 		bool isEditing() const;
 
@@ -59,7 +62,7 @@ namespace ofxMaskWorks
 		ofFbo canvasFbo;
 
 		bool editing;
-		ofRectangle drawBounds;
+		ofRectangle controlBounds;
 
 		std::vector<Point> points;
 		size_t addedIdx;

@@ -226,9 +226,7 @@ namespace ofxMaskWorks
 	{
 		if (!this->canvasFbo.isAllocated()) return;
 
-		auto & mutableBounds = const_cast<ofRectangle &>(this->drawBounds);
-		mutableBounds.set(x, y, width, height);
-		this->canvasFbo.draw(this->drawBounds);
+		this->canvasFbo.draw(x, y, width, height);
 	}
 
 	const ofTexture & Builder::getMaskTexture() const
@@ -245,12 +243,26 @@ namespace ofxMaskWorks
 	{
 		this->maskFbo.allocate(width, height);
 		this->canvasFbo.allocate(width, height);
+
+		this->controlBounds.setWidth(width);
+		this->controlBounds.setHeight(height);
+
 		this->maskDirty = true;
 	}
 
 	const glm::ivec2 & Builder::getMaskSize() const
 	{
 		return glm::ivec2(this->maskFbo.getWidth(), this->maskFbo.getHeight());
+	}
+
+	void Builder::setControlBounds(const ofRectangle & controlBounds)
+	{
+		this->controlBounds = controlBounds;
+	}
+
+	const ofRectangle & Builder::getControlBounds() const
+	{
+		return this->controlBounds;
 	}
 
 	void Builder::setEditing(bool editing)
@@ -423,13 +435,13 @@ namespace ofxMaskWorks
 
 	bool Builder::onMousePressed(ofMouseEventArgs & args)
 	{
-		if (!this->drawBounds.inside(args.x, args.y))
+		if (!this->controlBounds.inside(args.x, args.y))
 		{
 			return false;
 		}
 
 		// Try to find a near point to focus.
-		const auto currCursor = glm::vec2(args.x - this->drawBounds.x, args.y - this->drawBounds.y);
+		const auto currCursor = glm::vec2(args.x - this->controlBounds.x, args.y - this->controlBounds.y);
 		size_t nearestIdx = -1;
 		float nearestDist = std::numeric_limits<float>::max();
 		for (int i = 0; i < this->points.size(); ++i)
@@ -492,7 +504,7 @@ namespace ofxMaskWorks
 			return false;
 		}
 
-		const auto currCursor = glm::vec2(args.x - this->drawBounds.x, args.y - this->drawBounds.y);
+		const auto currCursor = glm::vec2(args.x - this->controlBounds.x, args.y - this->controlBounds.y);
 		const auto deltaCursor = currCursor - this->dragCursor;
 		this->points[this->focusIdx].pos += deltaCursor;
 		ofLogVerbose(__FUNCTION__) << "Drag point " << this->focusIdx << " to " << this->points[this->focusIdx].pos;
@@ -510,7 +522,7 @@ namespace ofxMaskWorks
 			return false;
 		}
 
-		const auto currCursor = glm::vec2(args.x - this->drawBounds.x, args.y - this->drawBounds.y);
+		const auto currCursor = glm::vec2(args.x - this->controlBounds.x, args.y - this->controlBounds.y);
 		const auto deltaCursor = currCursor - this->pressCursor;
 		if (glm::length(deltaCursor) < kMoveThreshold)
 		{
