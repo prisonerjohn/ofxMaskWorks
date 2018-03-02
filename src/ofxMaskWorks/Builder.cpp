@@ -447,6 +447,9 @@ namespace ofxMaskWorks
 	{
 		if (!this->controlBounds.inside(args.x, args.y))
 		{
+			this->addedIdx = -1;
+			this->focusIdx = -1;
+
 			return false;
 		}
 
