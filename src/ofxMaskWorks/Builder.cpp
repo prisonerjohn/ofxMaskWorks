@@ -282,6 +282,89 @@ namespace ofxMaskWorks
 		return this->editing;
 	}
 
+	void Builder::serialize(nlohmann::json & json, const std::string & name) const
+	{
+		nlohmann::json jsonSize;
+		jsonSize["width"] = this->maskFbo.getWidth();
+		jsonSize["height"] = this->maskFbo.getHeight();
+		
+		nlohmann::json jsonPoints;
+		for (int i = 0; i < this->points.size(); ++i)
+		{
+			nlohmann::json jsonPt;
+			jsonPt["pos"] = ofToString(this->points[i].pos);
+			jsonPt["curve"] = this->points[i].curve;
+
+			jsonPoints.push_back(jsonPt);
+		}
+
+		nlohmann::json jsonMask;
+		jsonMask["size"] = jsonSize;
+		jsonMask["points"] = jsonPoints;
+
+		json[name] = jsonMask;
+	}
+
+	void Builder::deserialize(const nlohmann::json & json, const std::string & name)
+	{
+		if (json.count(name) == 0)
+		{
+			ofLogError(__FUNCTION__) << "\"" << name << "\" dictionary not found!";
+			return;
+		}
+
+		nlohmann::json jsonMask = json[name];
+		if (jsonMask.count("size") == 0)
+		{
+			ofLogError(__FUNCTION__) << "\"size\" dictionary not found!";
+			return;
+		}
+		if (jsonMask.count("points") == 0)
+		{
+			ofLogError(__FUNCTION__) << "\"points\" array not found!";
+			return;
+		}
+
+		const auto jsonSize = jsonMask["size"];
+		if (jsonSize.count("width") == 0)
+		{
+			ofLogError(__FUNCTION__) << "\"width\" value not found!";
+			return;
+		}
+		if (jsonSize.count("height") == 0)
+		{
+			ofLogError(__FUNCTION__) << "\"height\" value not found!";
+			return;
+		}
+
+		int width = jsonSize["width"];
+		int height = jsonSize["height"];
+		this->setMaskSize(width, height);
+
+		const auto jsonPoints = jsonMask["points"];
+		this->points.resize(jsonPoints.size());
+		for (int i = 0; i < jsonPoints.size(); ++i)
+		{
+			const auto jsonPt = jsonPoints[i];
+			
+			if (jsonPt.count("pos") == 0)
+			{
+				ofLogError(__FUNCTION__) << "\"pos\" not found at index " << i << "!";
+				continue;
+			}
+			if (jsonPt.count("curve") == 0)
+			{
+				ofLogError(__FUNCTION__) << "\"curve\" not found at index " << i << "!";
+				continue;
+			}
+
+			this->points[i].pos = ofFromString<glm::vec2>(jsonPt["pos"]);
+			this->points[i].curve = jsonPt["curve"];
+		}
+
+		this->maskDirty = true;
+	}
+
 	bool Builder::onKeyPressed(ofKeyEventArgs & args)
 	{
 		if (args.key == 'M')

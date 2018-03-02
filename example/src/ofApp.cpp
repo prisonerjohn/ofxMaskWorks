@@ -6,6 +6,14 @@ void ofApp::setup()
 	//ofSetLogLevel(OF_LOG_VERBOSE);
 
 	maskBuilder.setMaskSize(512, 424);
+
+	loadSettings();
+}
+
+//--------------------------------------------------------------
+void ofApp::exit()
+{
+	saveSettings();
 }
 
 //--------------------------------------------------------------
@@ -29,61 +37,38 @@ void ofApp::draw()
 		<< "* RIGHT-CLICK / add curve point OR convert point" << std::endl
 		<< "* DRAG MOUSE  / move selected point" << std::endl
 		<< "* UP,DOWN,LEFT,RIGHT / nudge selected point" << std::endl
-		<< "* DELETE / delete selected point";
+		<< "* DELETE / delete selected point" << std::endl
+		<< std::endl
+		<< "ofApp" << std::endl
+		<< "* SHIFT+L / load settings" << std::endl
+		<< "* SHIFT+S / save settings";
 	ofDrawBitmapStringHighlight(oss.str(), 10, 20);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
+void ofApp::saveSettings() const
+{
+	nlohmann::json json;
+	maskBuilder.serialize(json);
+	ofSavePrettyJson("settings.json", json);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::loadSettings()
+{
+	const auto json = ofLoadJson("settings.json");
+	maskBuilder.deserialize(json);
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+void ofApp::keyPressed(int key)
+{
+	if (key == 'S')
+	{
+		saveSettings();
+	}
+	else if (key == 'L')
+	{
+		loadSettings();
+	}
 }

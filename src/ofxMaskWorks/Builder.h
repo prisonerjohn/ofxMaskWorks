@@ -2,6 +2,7 @@
 
 #include "ofEvents.h"
 #include "ofFbo.h"
+#include "ofJson.h"
 #include "ofPath.h"
 #include "ofPolyline.h"
 #include "ofRectangle.h"
@@ -36,6 +37,9 @@ namespace ofxMaskWorks
 
 		void setEditing(bool editing);
 		bool isEditing() const;
+
+		void serialize(nlohmann::json & json, const std::string & name = "ofxMaskWorks") const;
+		void deserialize(const nlohmann::json & json, const std::string & name = "ofxMaskWorks");
 
 	private:
 		static const float kNearThreshold;
