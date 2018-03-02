@@ -1,7 +1,6 @@
 #include "Builder.h"
 
 #include "ofGraphics.h"
-#include "ofPath.h"
 
 namespace ofxMaskWorks
 {
@@ -25,7 +24,7 @@ namespace ofxMaskWorks
 
 	void Builder::update()
 	{
-		if (!this->canvasFbo.isAllocated()) return;
+		if (!this->maskFbo.isAllocated() || !this->canvasFbo.isAllocated()) return;
 
 		if (this->maskDirty && this->rebuildMask())
 		{
@@ -34,12 +33,12 @@ namespace ofxMaskWorks
 
 		this->canvasFbo.begin();
 		{
-			ofBackground(ofColor::white);
+			ofClear(0, 0);
 
-			// Draw the mask.
-			if (this->maskFbo.isAllocated())
+			// Draw the path.
+			for (auto & polyline : this->maskPath.getOutline())
 			{
-				this->maskFbo.draw(0, 0);
+				polyline.draw();
 			}
 
 			if (this->editing)
@@ -100,24 +99,24 @@ namespace ofxMaskWorks
 				ofBackground(ofColor::black);
 				ofSetColor(ofColor::white);
 
-				ofPath path;
+				this->maskPath.clear();
 				size_t numCurvePts = 0;
 				for (int i = 0; i < this->points.size(); ++i)
 				{
 					const auto & currPt = this->points[i];
 					if (i == 0)
 					{
-						path.moveTo(currPt.pos);
+						this->maskPath.moveTo(currPt.pos);
 						ofLogVerbose(__FUNCTION__) << i << ": Path MOVE to " << currPt.pos;
 
 						if (currPt.curve)
 						{
 							// Add a couple of curve points to get it going.
-							path.curveTo(currPt.pos);
+							this->maskPath.curveTo(currPt.pos);
 							ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/CURR (" << numCurvePts << ") to " << currPt.pos;
 							++numCurvePts;
 
-							path.curveTo(currPt.pos);
+							this->maskPath.curveTo(currPt.pos);
 							ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/CURR (" << numCurvePts << ") to " << currPt.pos;
 							++numCurvePts;
 						}
@@ -130,16 +129,16 @@ namespace ofxMaskWorks
 							{
 								// First point in curve, add curve points coming from the previous point.
 								const auto prevPt = this->points[i - 1];
-								path.curveTo(prevPt.pos);
+								this->maskPath.curveTo(prevPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/BEGIN (" << numCurvePts << ") to " << prevPt.pos;
 								++numCurvePts;
 
-								path.curveTo(prevPt.pos);
+								this->maskPath.curveTo(prevPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/BEGIN (" << numCurvePts << ") to " << prevPt.pos;
 								++numCurvePts;
 							}
 
-							path.curveTo(currPt.pos);
+							this->maskPath.curveTo(currPt.pos);
 							ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/CURR (" << numCurvePts << ") to " << currPt.pos;
 							++numCurvePts;
 						}
@@ -148,16 +147,16 @@ namespace ofxMaskWorks
 							if (numCurvePts > 0)
 							{
 								// Previous was last point in curve, add curve points at the current point.
-								path.curveTo(currPt.pos);
+								this->maskPath.curveTo(currPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << currPt.pos;
 								++numCurvePts;
 
-								path.curveTo(currPt.pos);
+								this->maskPath.curveTo(currPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << currPt.pos;
 								++numCurvePts;
 							}
 
-							path.lineTo(currPt.pos);
+							this->maskPath.lineTo(currPt.pos);
 							ofLogVerbose(__FUNCTION__) << i << ": Path LINE to " << currPt.pos;
 							numCurvePts = 0;
 						}
@@ -171,38 +170,38 @@ namespace ofxMaskWorks
 								if (numCurvePts == 0)
 								{
 									// First point in curve, add curve points coming from the current point.
-									path.curveTo(currPt.pos);
+									this->maskPath.curveTo(currPt.pos);
 									ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/BEGIN (" << numCurvePts << ") to " << currPt.pos;
 									++numCurvePts;
 
-									path.curveTo(currPt.pos);
+									this->maskPath.curveTo(currPt.pos);
 									ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/BEGIN (" << numCurvePts << ") to " << currPt.pos;
 									++numCurvePts;
 								}
 								
 								// Add a couple of curve points to close it up.
-								path.curveTo(firstPt.pos);
+								this->maskPath.curveTo(firstPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << firstPt.pos;
 								++numCurvePts;
 						
-								path.curveTo(firstPt.pos);
+								this->maskPath.curveTo(firstPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << firstPt.pos;
 								++numCurvePts;
 							}
 							else if (numCurvePts > 0)
 							{
 								// Previous was last point in curve, add curve points at the current point.
-								path.curveTo(firstPt.pos);
+								this->maskPath.curveTo(firstPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << currPt.pos;
 								++numCurvePts;
 
-								path.curveTo(firstPt.pos);
+								this->maskPath.curveTo(firstPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path CURVE/END (" << numCurvePts << ") to " << currPt.pos;
 								++numCurvePts;
 							}
 							else
 							{
-								path.lineTo(firstPt.pos);
+								this->maskPath.lineTo(firstPt.pos);
 								ofLogVerbose(__FUNCTION__) << i << ": Path LINE to " << firstPt.pos;
 								numCurvePts = 0;
 							}
@@ -210,17 +209,7 @@ namespace ofxMaskWorks
 					}
 				}
 
-				if (this->editing)
-				{
-					for (auto & polyline : path.getOutline())
-					{
-						polyline.draw();
-					}
-				}
-				else
-				{
-					path.draw();
-				}
+				this->maskPath.draw();
 			}
 		}
 		this->maskFbo.end();
@@ -247,16 +236,21 @@ namespace ofxMaskWorks
 		return this->maskFbo.getTexture();
 	}
 
-	void Builder::setCanvasSize(int width, int height)
+	const ofPath & Builder::getMaskPath() const
 	{
-		this->canvasFbo.allocate(width, height);
+		return this->maskPath;
+	}
+
+	void Builder::setMaskSize(int width, int height)
+	{
 		this->maskFbo.allocate(width, height);
+		this->canvasFbo.allocate(width, height);
 		this->maskDirty = true;
 	}
 
-	const glm::ivec2 & Builder::getCanvasSize() const
+	const glm::ivec2 & Builder::getMaskSize() const
 	{
-		return glm::ivec2(this->canvasFbo.getWidth(), this->canvasFbo.getHeight());
+		return glm::ivec2(this->maskFbo.getWidth(), this->maskFbo.getHeight());
 	}
 
 	void Builder::setEditing(bool editing)

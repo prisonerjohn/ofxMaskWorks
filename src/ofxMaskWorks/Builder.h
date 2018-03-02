@@ -2,6 +2,7 @@
 
 #include "ofEvents.h"
 #include "ofFbo.h"
+#include "ofPath.h"
 #include "ofPolyline.h"
 #include "ofRectangle.h"
 #include "ofVectorMath.h"
@@ -28,8 +29,10 @@ namespace ofxMaskWorks
 
 		const ofTexture & getMaskTexture() const;
 
-		void setCanvasSize(int width, int height);
-		const glm::ivec2 & getCanvasSize() const;
+		const ofPath & getMaskPath() const;
+
+		void setMaskSize(int width, int height);
+		const glm::ivec2 & getMaskSize() const;
 
 		void setEditing(bool editing);
 		bool isEditing() const;
@@ -48,8 +51,8 @@ namespace ofxMaskWorks
 		bool onMouseReleased(ofMouseEventArgs & args);
 
 	private:
-		ofFbo canvasFbo;
 		ofFbo maskFbo;
+		ofFbo canvasFbo;
 
 		bool editing;
 		ofRectangle drawBounds;
@@ -61,6 +64,7 @@ namespace ofxMaskWorks
 		glm::vec2 pressCursor;
 		glm::vec2 dragCursor;
 
+		ofPath maskPath;
 		bool maskDirty;
 	};
 }

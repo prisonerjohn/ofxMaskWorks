@@ -5,7 +5,7 @@ void ofApp::setup()
 {
 	//ofSetLogLevel(OF_LOG_VERBOSE);
 
-	maskBuilder.setCanvasSize(512, 424);
+	maskBuilder.setMaskSize(512, 424);
 }
 
 //--------------------------------------------------------------
@@ -17,9 +17,10 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	const auto maskSize = maskBuilder.getCanvasSize();
-	const auto maskPos = glm::vec2(ofGetWidth() - maskSize.x, ofGetHeight() - maskSize.y) * 0.5f;
-	maskBuilder.draw(maskPos.x, maskPos.y, maskSize.x, maskSize.y);
+	const auto maskSize = maskBuilder.getMaskSize();
+	const auto padding = glm::vec2((ofGetWidth() - maskSize.x * 2) / 3.0f, (ofGetHeight() - maskSize.y) / 2.0f);
+	maskBuilder.draw(padding.x, padding.y, maskSize.x, maskSize.y);
+	maskBuilder.getMaskTexture().draw(padding.x * 2 + maskSize.x, padding.y);
 
 	std::ostringstream oss;
 	oss << "ofxMaskWorks" << std::endl
