@@ -27,6 +27,7 @@ namespace ofxMaskWorks
 
 		void draw(int x, int y) const;
 		void draw(int x, int y, int width, int height) const;
+		void draw(const ofRectangle & controlBounds) const;
 
 		const ofTexture & getMaskTexture() const;
 
@@ -35,6 +36,7 @@ namespace ofxMaskWorks
 		void setMaskSize(int width, int height);
 		const glm::ivec2 & getMaskSize() const;
 
+		void setControlBounds(int x, int y, int width, int height);
 		void setControlBounds(const ofRectangle & controlBounds);
 		const ofRectangle & getControlBounds() const;
 

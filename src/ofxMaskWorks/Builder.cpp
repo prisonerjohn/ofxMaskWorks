@@ -229,6 +229,11 @@ namespace ofxMaskWorks
 		this->canvasFbo.draw(x, y, width, height);
 	}
 
+	void Builder::draw(const ofRectangle & controlBounds) const
+	{
+		this->draw(controlBounds.getMinX(), controlBounds.getMinY(), controlBounds.getWidth(), controlBounds.getHeight());
+	}
+
 	const ofTexture & Builder::getMaskTexture() const
 	{
 		return this->maskFbo.getTexture();
@@ -253,6 +258,11 @@ namespace ofxMaskWorks
 	const glm::ivec2 & Builder::getMaskSize() const
 	{
 		return glm::ivec2(this->maskFbo.getWidth(), this->maskFbo.getHeight());
+	}
+
+	void Builder::setControlBounds(int x, int y, int width, int height)
+	{
+		this->setControlBounds(ofRectangle(x, y, width, height));
 	}
 
 	void Builder::setControlBounds(const ofRectangle & controlBounds)

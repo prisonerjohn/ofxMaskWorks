@@ -27,7 +27,10 @@ void ofApp::draw()
 {
 	const auto maskSize = maskBuilder.getMaskSize();
 	const auto padding = glm::vec2((ofGetWidth() - maskSize.x * 2) / 3.0f, (ofGetHeight() - maskSize.y) / 2.0f);
+
+	maskBuilder.setControlBounds(ofRectangle(padding.x, padding.y, maskSize.x, maskSize.y));
 	maskBuilder.draw(padding.x, padding.y, maskSize.x, maskSize.y);
+
 	maskBuilder.getMaskTexture().draw(padding.x * 2 + maskSize.x, padding.y);
 
 	std::ostringstream oss;
