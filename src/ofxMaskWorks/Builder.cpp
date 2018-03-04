@@ -229,9 +229,9 @@ namespace ofxMaskWorks
 		this->canvasFbo.draw(x, y, width, height);
 	}
 
-	void Builder::draw(const ofRectangle & controlBounds) const
+	void Builder::draw(const ofRectangle & drawBounds) const
 	{
-		this->draw(controlBounds.getMinX(), controlBounds.getMinY(), controlBounds.getWidth(), controlBounds.getHeight());
+		this->draw(drawBounds.getMinX(), drawBounds.getMinY(), drawBounds.getWidth(), drawBounds.getHeight());
 	}
 
 	const ofTexture & Builder::getMaskTexture() const
