@@ -226,6 +226,7 @@ namespace ofxMaskWorks
 	{
 		if (!this->canvasFbo.isAllocated()) return;
 
+		ofSetColor(ofColor::white);
 		this->canvasFbo.draw(x, y, width, height);
 	}
 
