@@ -89,6 +89,8 @@ namespace ofxMaskWorks
 
 		this->maskFbo.begin();
 		{
+			this->maskPath.clear();
+
 			if (this->points.size() == 0)
 			{
 				// No points, just use the entire screen.
@@ -99,7 +101,6 @@ namespace ofxMaskWorks
 				ofBackground(ofColor::black);
 				ofSetColor(ofColor::white);
 
-				this->maskPath.clear();
 				size_t numCurvePts = 0;
 				for (int i = 0; i < this->points.size(); ++i)
 				{
@@ -233,6 +234,13 @@ namespace ofxMaskWorks
 	void Builder::draw(const ofRectangle & drawBounds) const
 	{
 		this->draw(drawBounds.getMinX(), drawBounds.getMinY(), drawBounds.getWidth(), drawBounds.getHeight());
+	}
+
+	void Builder::clearPoints()
+	{
+		this->points.clear();
+
+		this->maskDirty = true;
 	}
 
 	const ofTexture & Builder::getMaskTexture() const

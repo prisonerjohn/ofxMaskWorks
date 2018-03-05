@@ -29,6 +29,8 @@ namespace ofxMaskWorks
 		void draw(int x, int y, int width, int height) const;
 		void draw(const ofRectangle & drawBounds) const;
 
+		void clearPoints();
+
 		const ofTexture & getMaskTexture() const;
 
 		const ofPath & getMaskPath() const;
