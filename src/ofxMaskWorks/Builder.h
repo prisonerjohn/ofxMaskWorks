@@ -43,6 +43,8 @@ namespace ofxMaskWorks
 		void setEditing(bool editing);
 		bool isEditing() const;
 
+		bool isRegionDefined() const;
+
 		void serialize(nlohmann::json & json, const std::string & name = "ofxMaskWorks") const;
 		void deserialize(const nlohmann::json & json, const std::string & name = "ofxMaskWorks");
 

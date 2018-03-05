@@ -305,6 +305,11 @@ namespace ofxMaskWorks
 		return this->editing;
 	}
 
+	bool Builder::isRegionDefined() const
+	{
+		return this->points.size() >= 3;
+	}
+
 	void Builder::serialize(nlohmann::json & json, const std::string & name) const
 	{
 		nlohmann::json jsonSize;
