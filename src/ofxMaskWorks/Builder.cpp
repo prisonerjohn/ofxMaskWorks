@@ -409,7 +409,8 @@ namespace ofxMaskWorks
 			ofLogNotice(__FUNCTION__) << "Set editing mode " << (this->editing ? "ON" : "OFF");
 			return true;
 		}
-		else if (this->focusIdx < this->points.size())
+		
+		if (this->editing && this->focusIdx < this->points.size())
 		{
 			if (args.key == OF_KEY_DEL)
 			{
@@ -420,7 +421,7 @@ namespace ofxMaskWorks
 				this->maskDirty = true;
 				return true;
 			}
-			else if (args.key == OF_KEY_UP)
+			if (args.key == OF_KEY_UP)
 			{
 				this->points[this->focusIdx].pos.y -= kNudgePointAmount;
 				ofLogVerbose(__FUNCTION__) << "Nudge point " << this->focusIdx << " UP to " << this->points[this->focusIdx].pos;
@@ -428,7 +429,7 @@ namespace ofxMaskWorks
 				this->maskDirty = true;
 				return true;
 			}
-			else if (args.key == OF_KEY_DOWN)
+			if (args.key == OF_KEY_DOWN)
 			{
 				this->points[this->focusIdx].pos.y += kNudgePointAmount;
 				ofLogVerbose(__FUNCTION__) << "Nudge point " << this->focusIdx << " DOWN to " << this->points[this->focusIdx].pos;
@@ -436,7 +437,7 @@ namespace ofxMaskWorks
 				this->maskDirty = true;
 				return true;
 			}
-			else if (args.key == OF_KEY_LEFT)
+			if (args.key == OF_KEY_LEFT)
 			{
 				this->points[this->focusIdx].pos.x -= kNudgePointAmount;
 				ofLogVerbose(__FUNCTION__) << "Nudge point " << this->focusIdx << " LEFT to " << this->points[this->focusIdx].pos;
@@ -444,7 +445,7 @@ namespace ofxMaskWorks
 				this->maskDirty = true;
 				return true;
 			}
-			else if (args.key == OF_KEY_RIGHT)
+			if (args.key == OF_KEY_RIGHT)
 			{
 				this->points[this->focusIdx].pos.x += kNudgePointAmount;
 				ofLogVerbose(__FUNCTION__) << "Nudge point " << this->focusIdx << " RIGHT to " << this->points[this->focusIdx].pos;
