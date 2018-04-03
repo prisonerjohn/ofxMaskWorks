@@ -92,11 +92,12 @@ namespace ofxMaskWorks
 			if (this->points.size() == 0)
 			{
 				// No points, just use the entire screen.
-				ofBackground(ofColor::white);
+				ofClear(255, 255);
 			}
 			else
 			{
-				ofBackground(ofColor::black);
+				ofClear(0, 0);
+
 				ofSetColor(ofColor::white);
 
 				this->maskPath.clear();
