@@ -175,11 +175,13 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\ofxMaskWorks\SdfGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxMaskWorks\src\ofxMaskWorks\Builder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\ofxMaskWorks\SdfGenerator.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxMaskWorks\src\ofxMaskWorks\Builder.h" />
     <ClInclude Include="..\..\..\addons\ofxMaskWorks\src\ofxMaskWorks.h" />

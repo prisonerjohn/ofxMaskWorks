@@ -20,6 +20,14 @@ void ofApp::exit()
 void ofApp::update()
 {
 	maskBuilder.update();
+
+	if (doSdf)
+	{
+		maskBuilder.getMaskTexture().readToPixels(maskPixels);
+		sdfPixels.allocate(maskPixels.getWidth(), maskPixels.getHeight(), OF_IMAGE_COLOR_ALPHA);
+		sdfGenerator.generate(maskPixels, sdfPixels);
+		sdfTexture.loadData(sdfPixels);
+	}
 }
 
 //--------------------------------------------------------------
@@ -31,7 +39,14 @@ void ofApp::draw()
 	maskBuilder.setControlBounds(ofRectangle(padding.x, padding.y, maskSize.x, maskSize.y));
 	maskBuilder.draw(padding.x, padding.y, maskSize.x, maskSize.y);
 
-	maskBuilder.getMaskTexture().draw(padding.x * 2 + maskSize.x, padding.y);
+	if (doSdf)
+	{
+		sdfTexture.draw(padding.x * 2 + maskSize.x, padding.y);
+	}
+	else
+	{
+		maskBuilder.getMaskTexture().draw(padding.x * 2 + maskSize.x, padding.y);
+	}
 
 	std::ostringstream oss;
 	oss << "ofxMaskWorks" << std::endl
@@ -43,6 +58,7 @@ void ofApp::draw()
 		<< "* DELETE / delete selected point" << std::endl
 		<< std::endl
 		<< "ofApp" << std::endl
+		<< "* SPACE / toggle SDF" << std::endl
 		<< "* SHIFT+L / load settings" << std::endl
 		<< "* SHIFT+S / save settings";
 	ofDrawBitmapStringHighlight(oss.str(), 10, 20);
@@ -66,7 +82,11 @@ void ofApp::loadSettings()
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-	if (key == 'S')
+	if (key == ' ')
+	{
+		doSdf ^= 1;
+	}
+	else if (key == 'S')
 	{
 		saveSettings();
 	}
